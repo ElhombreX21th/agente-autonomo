@@ -1,8 +1,8 @@
-# Agente Autônomo
+# Autonomous Agent
 
-Projeto de estudo para estruturar um assistente local com planejamento, memória e fluxo de tarefas.
+Study project for structuring a local assistant with planning, memory, and task-oriented execution flow.
 
-Status: repositório em fase inicial. A documentação abaixo define a proposta do projeto e a direção técnica recomendada para evolução.
+Status: early-stage repository. This documentation defines the project proposal and the recommended technical direction for future development.
 
 ## Screenshots
 
@@ -14,31 +14,31 @@ Status: repositório em fase inicial. A documentação abaixo define a proposta 
 
 ![Agent workflow overview](docs/screenshots/agent-workflow-overview.svg)
 
-## Objetivo
+## Objective
 
-Criar uma base organizada para um assistente capaz de receber uma tarefa, dividir em etapas, consultar memória/contexto e retornar uma resposta clara ao usuário.
+Build an organized foundation for an assistant that can receive a task, split it into steps, consult memory/context, and return a clear response to the user.
 
-## Conceitos Demonstrados
+## Concepts Demonstrated
 
-- Planejamento de tarefas
-- Memória local de contexto
-- Organização modular
-- Fluxo de decisão controlado
-- Documentação técnica para evolução
-- Preparação para testes automatizados
+- Task planning
+- Local context memory
+- Modular organization
+- Controlled decision flow
+- Technical documentation for future development
+- Preparation for automated tests
 
-## Stack Sugerida
+## Suggested Stack
 
 - Python 3.10+
-- FastAPI ou CLI Python
-- JSON ou SQLite para memória local
-- pytest para testes automatizados
-- GitHub Actions para validação contínua
+- FastAPI or Python CLI
+- JSON or SQLite for local memory
+- pytest for automated tests
+- GitHub Actions for continuous validation
 
-## Estrutura Recomendada
+## Recommended Structure
 
 ```text
-agente-autonomo/
+autonomous-agent/
 ├── app/
 │   ├── agent.py
 │   ├── planner.py
@@ -54,33 +54,33 @@ agente-autonomo/
 
 ## Roadmap
 
-- [ ] Criar estrutura base do projeto
-- [ ] Implementar CLI inicial
-- [ ] Criar módulo de planejamento
-- [ ] Criar memória local simples
-- [ ] Adicionar testes automatizados
-- [ ] Criar API com FastAPI
-- [ ] Adicionar logs e validações
-- [ ] Preparar versão demonstrável para portfolio
+- [ ] Create the base project structure
+- [ ] Implement the initial CLI
+- [ ] Create the planning module
+- [ ] Create simple local memory
+- [ ] Add automated tests
+- [ ] Create a FastAPI API
+- [ ] Add logs and validations
+- [ ] Prepare a demonstrable portfolio version
 
-## Como Rodar Futuramente
+## Future Local Execution
 
-Quando o código-base estiver implementado, a execução local deverá seguir um fluxo parecido com:
+When the codebase is implemented, local execution should follow a flow similar to:
 
 ```bash
 python -m app.cli
 ```
 
-E os testes:
+Tests:
 
 ```bash
 pytest
 ```
 
-## Valor para Portfolio
+## Portfolio Value
 
-Este projeto pode mostrar domínio de arquitetura de assistentes de IA, organização de software, separação de responsabilidades, testes e documentação. Para ficar forte em entrevistas, o próximo passo é implementar um MVP funcional pequeno, mas completo.
+This project can demonstrate AI assistant architecture, software organization, separation of responsibilities, testing, and documentation. To make it stronger for interviews, the next step is to implement a small but complete functional MVP.
 
-## Autor
+## Author
 
-Criado por ElhombreX21th.
+Created by ElhombreX21th.
