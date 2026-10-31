@@ -84,3 +84,8 @@ This project can demonstrate AI assistant architecture, software organization, s
 ## Author
 
 Created by ElhombreX21th.
+
+
+## Runnable Python, AI automation and MedTech portfolio lab (2026)
+
+Three independent synthetic-data demonstrations are available at [portfolio_lab](portfolio_lab/README.md): support-ticket ML triage with human review, resilient JSON API synchronization using SQLite, and MedTech event-log analysis with cited fictional runbook entries. Run `python -m portfolio_lab.demo` and `python -m unittest discover -s tests -v` from the repository root. **13 tests passed locally (2026-10-31).** These are not paid client or production implementations.
