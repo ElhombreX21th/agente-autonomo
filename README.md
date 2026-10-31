@@ -89,3 +89,17 @@ Created by ElhombreX21th.
 ## Runnable Python, AI automation and MedTech portfolio lab (2026)
 
 Three independent synthetic-data demonstrations are available at [portfolio_lab](portfolio_lab/README.md): support-ticket ML triage with human review, resilient JSON API synchronization using SQLite, and MedTech event-log analysis with cited fictional runbook entries. Run `python -m portfolio_lab.demo` and `python -m unittest discover -s tests -v` from the repository root. **13 tests passed locally (2026-10-31).** These are not paid client or production implementations.
+
+
+## 2026 Upwork Showcase — Three Distinct MedTech Operations Demonstrations
+
+These independent synthetic-data projects complement the existing portfolio instead of repeating the SLA, event-log, ticket-triage or API-sync demos.
+
+- [Field Service Dispatch Readiness](upwork_showcase_2026/medtech_service_desk/logic.py): parts, training, site access and scheduling.
+- [Synthetic Laboratory Data Quality](upwork_showcase_2026/healthcare_data_quality/logic.py): report mismatches, missing records and duplicate sources.
+- [Technical Pre-Sales Discovery](upwork_showcase_2026/technical_presales_crm/logic.py): qualification and consent-aware next steps.
+- [Interactive web showcase](upwork_showcase_2026/web/showcase.html), [read-only local server](upwork_showcase_2026/server.py), [17 Python regression tests](upwork_showcase_2026/tests/test_workflows.py), [documentation](upwork_showcase_2026/README.md).
+
+To verify: `python -m unittest discover -s upwork_showcase_2026/tests -v` and `python -m upwork_showcase_2026.server`.
+
+These prototypes use fictional data; there are no clinical, compliance, production or paid-client claims. The separate downloadable portfolio package contains actual browser screenshots.
