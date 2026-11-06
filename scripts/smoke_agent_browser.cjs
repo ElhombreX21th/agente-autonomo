@@ -3,7 +3,7 @@ const { chromium } = require('playwright');
 const fs = require('node:fs');
 const base = process.env.AGENT_TEST_URL || 'http://127.0.0.1:8787';
 (async () => {
-  const browser = await chromium.launch({executablePath:process.env.CHROMIUM_PATH || '/usr/bin/chromium', args:['--no-sandbox']});
+  const browser = await chromium.launch({executablePath:process.env.CHROMIUM_PATH || (fs.existsSync('/usr/bin/chromium')?'/usr/bin/chromium':undefined), args:['--no-sandbox']});
   try {
     const page = await browser.newPage({viewport:{width:1440,height:1100}});
     const errors=[];
@@ -16,6 +16,8 @@ const base = process.env.AGENT_TEST_URL || 'http://127.0.0.1:8787';
       await route.fulfill({status:response.status,headers:Object.fromEntries(response.headers),body:Buffer.from(await response.arrayBuffer())});
     });
     await page.goto(base);
+    const connect=async()=>{if(process.env.AGENT_TEST_CREDENTIAL){await page.getByLabel('Workspace credential (optional in local demo)',{exact:true}).fill(process.env.AGENT_TEST_CREDENTIAL);await page.getByRole('button',{name:'Connect workspace',exact:true}).click();await page.waitForFunction(()=>document.querySelector('#status').textContent==='Workspace connected.');}};
+    await connect();
     await page.getByRole('button',{name:'Create a support task'}).click();
     await page.getByLabel('Fictional request').fill('Synthetic urgent export failure at Demo Site A');
     await page.getByRole('button',{name:'Create reviewable plan'}).click();
@@ -30,6 +32,7 @@ const base = process.env.AGENT_TEST_URL || 'http://127.0.0.1:8787';
     const data=JSON.parse(fs.readFileSync(await file.path(),'utf8'));
     if(data.status!=='completed'||data.events.length!==5)throw Error('Incorrect export');
     await page.reload();
+    await connect();
     await page.getByRole('button',{name:'Activity & history',exact:true}).click();
     await page.getByLabel('Search loaded tasks by request or status').fill('Synthetic urgent export failure');
     await page.getByRole('button',{name:'Inspect',exact:true}).first().click();

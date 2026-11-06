@@ -26,6 +26,7 @@ def execute(task: str, tool: str = "checklist", approved: bool = False) -> Resul
     if not approved:
         audit.append({"at": datetime.now(timezone.utc).isoformat(), "event": "awaiting_approval"})
         return Result(task_id, "approval_required", {"tool": tool, "preview": task[:160]}, audit)
+    output: dict[str, Any]
     if tool == "summarize":
         output = {"summary": task[:300] + ("…" if len(task) > 300 else "")}
     elif tool == "classify":

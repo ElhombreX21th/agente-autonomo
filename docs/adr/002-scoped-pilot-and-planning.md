@@ -1,0 +1,11 @@
+# ADR 002: Scoped pilot credentials and optional AI advice
+
+Supersedes the single-operator access limitation of ADR 001 for explicitly authenticated workspaces. The execution core remains bounded and deterministic.
+
+API credentials are 256-bit random values; only digests are stored. Credentials carry workspace and role, can be revoked immediately, and have public IDs for event attribution. All task reads/writes and idempotency keys are scoped. Legacy data remains in the local demo scope. Customer sign-up, password handling, SSO and workspace administration over the network are deferred; provisioning is an offline database administrator command. Pilot deployments must explicitly require credentials. This does not make an unauthenticated demo a shared service.
+
+The provider adapter accepts only configured HTTPS destinations with verified TLS and no redirects. Task content is untrusted data. Model output is a strict plan schema limited to three tools and never invokes a tool. Advice is persisted separately, scoped to the caller and bound to subject/tool on task creation. The execution approval hash remains bound to the immutable task. The model sees no credential, retrieved private workspace history or tool output.
+
+A short SQLite transaction reserves conservative input/output spend before the outbound request; concurrent calls cannot exceed the configured reservation cap. Failures retain their reservation and never retry silently. Reported tokens and estimated actual cost are recorded separately. Estimates depend on configured provider rates and tokenizer assumptions and require real-invoice reconciliation before paid pilots. HTTP connect/read timeouts bound requests; distributed execution, provider retry policies and background cancellation remain separate work.
+
+The pilot entitlement caps stored tasks at 1,000 per workspace. Billing is an interface with a disabled implementation; checkout cannot charge. License decisions and commercial pricing are not inferred from deployment or merge permission.

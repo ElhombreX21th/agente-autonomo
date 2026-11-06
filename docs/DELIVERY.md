@@ -55,3 +55,11 @@ Keep the service bound to loopback, use fictional data, and do not deploy public
 Next implementation: authenticated operator identity and authorization with adversarial tests, followed by tenant boundaries/migrations and a configurable LLM provider with schema validation and enforced budgets. Keep external actions disabled until authorization and recovery are verified.
 
 Cloud install_script and start_skill were saved for this new workflow. Saving does not publish the environment snapshot; review/save and publication remain product actions.
+
+## Final completion addendum — 2026-11-06
+
+The earlier report above describes the first local increment. The final increment adds revocable hashed workspace credentials, owner/operator/viewer roles, workspace-isolated task access and actor attribution; optional structured AI suggestions with stored provenance, token accounting and transactional budget reservations; pilot task entitlements; a deliberately disabled billing adapter; Docker/Compose packaging; an authenticated browser workflow; lint, type checking and dependency vulnerability auditing in CI.
+
+Final local validation passed: 48 main/API/security/provider tests plus 17 showcase tests (65 total), embedded showcase JavaScript syntax, Ruff critical-error checks, mypy with untyped bodies checked, Markdown links, Docker build and non-root authenticated container runtime. `pip-audit` reported no known vulnerabilities in the pinned runtime dependency set. The authenticated browser test verified create → approve → result → export → reload/reconnect → history, pending cancellation and mobile layout.
+
+No live provider request was executed because no provider credential, destination, model or pricing was configured. Provider behavior is contract-tested with the real HTTP adapter and simulated HTTPS responses. Live billing remains impossible. Customer SSO, PostgreSQL migrations, distributed workers, external action connectors, full accessibility/penetration testing and production certification remain outside this pilot foundation.

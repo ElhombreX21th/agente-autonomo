@@ -1,28 +1,7 @@
-# Autonomous Agent 3.0 — implementation and commercialization
+# Autonomous Agent 3.0 — implementation
 
-## What is implemented
-The original standard-library core and CLI remain intact. A local FastAPI + SQLite service and connected browser workspace now add stored tasks, plan-bound approval, idempotency, pending cancellation, result export and persistent execution events. No LLM, external action connector, authentication, tenant isolation or paid billing is implemented. See [development instructions](DEVELOPMENT.md), [roadmap](ROADMAP.md) and [architecture decision](adr/001-local-workflow.md).
+The standard-library core, CLI and independent demos are preserved. The FastAPI + SQLite service and connected browser workspace now provide persistent tasks, approval, idempotency, pending cancellation, exports and audit events. Workspace credentials add scoped access, revocation and owner/operator/viewer roles. An optional HTTPS provider adds structured AI suggestions with persisted provenance, token/cost estimates and conservative spending reservations. Billing remains disabled.
 
-## Verify
-```bash
-python -m unittest discover -s tests -p 'test_agent_v3.py' -v
-python -m agent_v3.cli --task "Review an urgent ticket" --tool classify --approve
-python -m agent_v3.cli --task "Prepare a checklist"
-```
+See [development instructions](DEVELOPMENT.md), [delivery status](ROADMAP.md), [commercial pilot](COMMERCIAL_PILOT.md), [delivery evidence](DELIVERY.md) and [the original architecture decision](adr/001-local-workflow.md). The original ADR records the first local increment; the current access/AI additions are described in ADR 002.
 
-## Remaining roadmap
-1. Add migration tooling and authenticated audit attribution; evaluate PostgreSQL for shared deployment.
-2. Add authentication, RBAC and tenant isolation to the existing local FastAPI endpoints.
-3. Add pluggable LLM providers with structured outputs, evaluation and budget limits.
-4. Introduce tool permissions, secrets management, rate limiting, idempotency and human review.
-5. Extend the connected local dashboard after authorization contracts; add integrations and secure deployment.
-6. Pilot with real users before enabling billing.
-
-## Commercial packaging (hypotheses)
-Starter R$99/month; Professional R$299/month; Business R$999/month; Enterprise custom. These are unvalidated pricing hypotheses, not active subscriptions.
-
-## Licensing and IP
-Do not assume the public repository is open-source licensed. Choose a license and verify ownership of all contributions before selling or distributing. Keep customer data, credentials, private integrations and commercial-only code out of public commits.
-
-## Product claims
-This is a prototype. Do not market it as a production-ready autonomous AI agent, a certified healthcare solution, or a system with paying customers.
+Live model validation, production deployment hardening, customer SSO, PostgreSQL migration and legal licensing remain separate from implemented/tested pilot capabilities. No production certification, paid customer outcome or active subscription is claimed.

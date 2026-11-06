@@ -31,7 +31,7 @@ For technical support and service operations teams exploring controlled automati
 
 Many teams lose time switching between tickets, spreadsheets, operational checklists and disconnected tools. Autonomous Agent explores how to orchestrate these workflows with **explicit permissions, structured results and traceability**.
 
-> **Current maturity:** This repository contains working *prototype components* and independent synthetic-data demonstrations. The v3 core is deterministic and **does not use an LLM or perform external autonomous actions**. It is not production-ready.
+> **Current maturity:** This repository contains working *prototype components* and independent synthetic-data demonstrations. The execution core is deterministic. **Optional structured AI suggestions require a configured provider and an authenticated workspace; no external action tools are enabled.** It is not production-ready.
 
 ## What exists today
 
@@ -41,7 +41,10 @@ Many teams lose time switching between tickets, spreadsheets, operational checkl
 | **Command-line interface** | Run approved checklist, summary and classification flows | Runnable prototype |
 | **Local API + storage** | Validated tasks, plan-bound approval, idempotency, pending cancellation | FastAPI + SQLite prototype |
 | **Operator workspace** | Create, approve, inspect and export tasks; searchable history | Connected local web application |
-| **Audit trail** | Timestamped events stored with execution results | SQLite via API; transient via CLI |
+| **Audit trail** | Timestamped events with credential identifiers | SQLite via API; transient via CLI |
+| **Workspace access** | Revocable hashed credentials, owner/operator/viewer roles, task isolation | Pilot API + browser sign-in |
+| **AI planning** | Restricted structured suggestions, stored provenance, token accounting and conservative budget reservations | Optional OpenAI-compatible HTTPS adapter; contract tested, live provider untested |
+| **Commercial foundation** | Stored-task entitlement and disabled billing interface | Pilot foundation; no active charges |
 | **Portfolio lab** | Ticket triage, resilient API sync and fictional MedTech event analysis | Independent demos |
 | **Operations showcase** | Dispatch readiness, lab data quality and pre-sales discovery | Independent demos |
 | **Web showcase** | Read-only local demonstration interface | Demo, not SaaS |
@@ -53,7 +56,6 @@ Requires **Python 3.11+** for the API. The original CLI and independent demos st
 ```bash
 git clone https://github.com/ElhombreX21th/agente-autonomo.git
 cd agente-autonomo
-git switch upgrade/autonomous-agent-v3
 
 python -m venv .venv
 # Windows: .venv\Scripts\activate
@@ -81,7 +83,7 @@ See [development and validation instructions](docs/DEVELOPMENT.md), including br
 
 The diagram describes the original local CLI core. The new API stores a task and immutable plan hash in SQLite; approval executes that same stored task and commits its result and audit events atomically. The [architecture decision](docs/adr/001-local-workflow.md) describes transaction boundaries and the deliberate local-only scope.
 
-**Safety by design:** no unrestricted shell tool, no automatic outbound network actions, and no silent execution in the v3 core. The API adds persistent audit storage. Authentication, tenant isolation, LLM providers and external connectors remain future work. Bind the service to loopback only.
+**Safety by design:** no unrestricted shell tool, no automatic outbound network actions, and no silent execution in the v3 core. The API adds scoped storage, revocable workspace credentials, roles and optional structured AI planning. External action connectors, customer identity lifecycle/SSO and a hardened shared deployment remain future work. Bind the service to loopback only; see the [pilot access guide](docs/DEVELOPMENT.md).
 
 ## Portfolio & demos
 
@@ -115,9 +117,9 @@ python -m upwork_showcase_2026.server
 
 ### Connected operator workspace
 
-![Actual local agent workspace with a completed fictional support task](docs/screenshots/agent-workspace-v5.png)
+![Actual local agent workspace with a completed fictional support task](docs/screenshots/agent-workspace-v6.png)
 
-Real browser capture: a fictional request was submitted, approved and classified through the API. Stored results, JSON export and history were verified in the browser. This is deterministic automation, not LLM reasoning.
+Real browser capture: a fictional request was submitted, approved and classified through the API. Stored results, JSON export and history were verified in the browser. The captured execution uses a deterministic tool. Optional AI suggestions are separately labeled, validated and stored before human-approved execution.
 
 ### Operations showcase, synthetic data
 
@@ -127,13 +129,13 @@ Actual browser capture of the read-only operations showcase. It is a separate wo
 
 ## Roadmap
 
-The [delivery roadmap](docs/ROADMAP.md) separates the implemented local backend and dashboard from upcoming AI, authentication and SaaS work. See the [implementation and commercialization notes](docs/UPGRADE_V3.md) for pricing hypotheses and licensing considerations.
+The [delivery roadmap](docs/ROADMAP.md) separates the implemented local backend and dashboard from remaining live-provider validation, deployment hardening and commercial validation work. See the [implementation and commercialization notes](docs/UPGRADE_V3.md) for pricing hypotheses and licensing considerations.
 
 ## Commercial pilots
 
 **Target workflows:** support ticket operations, field-service coordination, operational checklists, data-quality review and internal reporting.
 
-**Engagement model under evaluation:** tailored pilot projects, setup/integration services and eventual monthly subscriptions. No pricing, service-level guarantees, production deployments or customer outcomes are represented as established.
+**Engagement model under evaluation:** tailored pilot projects, setup/integration services and eventual monthly subscriptions. No pricing, service-level guarantees, production deployments or customer outcomes are represented as established. See [pilot acceptance criteria and commercial boundaries](docs/COMMERCIAL_PILOT.md).
 
 Interested in evaluating a pilot? [Open a GitHub discussion via an issue](https://github.com/ElhombreX21th/agente-autonomo/issues/new) describing a workflow and its constraints. **Do not include credentials, patient information or confidential business data.**
 
@@ -145,7 +147,7 @@ The [hero](docs/assets/autonomous-agent-hero-v4.svg), [symbol](docs/assets/auton
 
 - Synthetic demonstration data only; not a clinical decision-support product.
 - Never commit API keys, client records or sensitive operational details.
-- Review dependency licenses and code ownership before commercial distribution.
+- Review the [dependency license inventory](docs/DEPENDENCY_LICENSES.md) and code ownership before commercial distribution.
 - **No open-source license has been declared here.** Public visibility alone does not grant reuse or redistribution rights.
 - This repository is a prototype/portfolio, not evidence of paid customers or production certification.
 
