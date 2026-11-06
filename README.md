@@ -73,7 +73,7 @@ python -m unittest discover -s upwork_showcase_2026/tests -v
 python -m agent_v3.cli --task "Review an urgent support ticket" --tool classify --approve
 ```
 
-See [development and validation instructions](docs/DEVELOPMENT.md), including browser smoke tests. GitHub Actions runs the Python suites; remote CI status is reported separately from local results.
+See [development and validation instructions](docs/DEVELOPMENT.md), including browser smoke tests, and the [delivery report](docs/DELIVERY.md) for verified results and remaining work. GitHub Actions runs the Python suites; remote CI status is reported separately from local results.
 
 ## Architecture
 

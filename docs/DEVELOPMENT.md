@@ -32,7 +32,7 @@ POST /api/tasks requires an Idempotency-Key header and JSON containing subject a
 The smoke test requires Node.js, Playwright and Chromium. In the managed cloud environment they were already available. Elsewhere install Playwright in a temporary location, keeping its dependencies out of the Python application:
 
 ```bash
-npm install --prefix /tmp/agent-browser playwright@1.56.1
+npm install --prefix /tmp/agent-browser playwright@1.62.1
 # Set CHROMIUM_PATH to your installed Chromium binary if needed.
 # Start the API in another terminal with a fresh temporary database first:
 AGENT_DATABASE=/tmp/agent-browser.sqlite3 python -m uvicorn agent_v3.api:create_app --factory --host 127.0.0.1 --port 8787
