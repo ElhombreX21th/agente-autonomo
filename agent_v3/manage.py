@@ -17,7 +17,9 @@ def main():
     create = commands.add_parser("provision")
     create.add_argument("--name", required=True)
     create.add_argument(
-        "--role", choices=["owner", "operator", "viewer"], default="owner"
+        "--role",
+        choices=["master", "administrator", "user"],
+        default="master",
     )
     create.add_argument(
         "--workspace", help="Existing workspace ID; omit to create a workspace"

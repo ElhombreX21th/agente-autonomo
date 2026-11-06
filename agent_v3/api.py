@@ -92,15 +92,7 @@ def create_app(database=None, auth_required=None, planner_factory=Planner):
                     status_code=401,
                     content={"detail": "Valid workspace credential required"},
                 )
-            request.state.identity = identity or Identity("local", "owner", "local")
-            if (
-                request.method not in ("GET", "HEAD", "OPTIONS")
-                and request.state.identity.role == "viewer"
-            ):
-                return JSONResponse(
-                    status_code=403,
-                    content={"detail": "Viewer credentials are read-only"},
-                )
+            request.state.identity = identity or Identity("local", "master", "local")
         # Local services still need protection from cross-site browser writes.
         if request.method not in ("GET", "HEAD", "OPTIONS"):
             origin = request.headers.get("origin")
@@ -154,6 +146,10 @@ def create_app(database=None, auth_required=None, planner_factory=Planner):
             raise HTTPException(
                 403, "Provider use requires an authenticated workspace credential"
             )
+        if request.state.identity.role not in {"master", "administrator"}:
+            raise HTTPException(
+                403, "AI planning requires MASTER or ADMINISTRATOR access"
+            )
         return planner.suggest(data.subject, request.state.identity.workspace)
 
     @app.get("/api/tasks")
@@ -183,6 +179,8 @@ def create_app(database=None, auth_required=None, planner_factory=Planner):
 
     @app.post("/api/tasks/{task_id}/approve")
     def approve(task_id: str, data: Approval, request: Request):
+        if request.state.identity.role not in {"master", "administrator"}:
+            raise HTTPException(403, "Approval requires MASTER or ADMINISTRATOR access")
         return store.approve(
             task_id,
             data.plan_hash,
@@ -192,6 +190,10 @@ def create_app(database=None, auth_required=None, planner_factory=Planner):
 
     @app.post("/api/tasks/{task_id}/cancel")
     def cancel(task_id: str, request: Request):
+        if request.state.identity.role not in {"master", "administrator"}:
+            raise HTTPException(
+                403, "Cancellation requires MASTER or ADMINISTRATOR access"
+            )
         return store.cancel(
             task_id, request.state.identity.workspace, request.state.identity.key_id
         )

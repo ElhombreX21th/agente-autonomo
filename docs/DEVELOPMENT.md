@@ -18,7 +18,7 @@ Direct dependencies are listed in requirements-api.txt/requirements-test.txt; re
 ## Authenticated local pilot
 
 ```bash
-# Provision an owner credential locally; it is shown once. Store it securely.
+# Provision a MASTER credential locally; it is shown once. Store it securely.
 python -m agent_v3.manage provision --name "Synthetic Pilot"
 # Then require credentials for workspace APIs:
 AGENT_AUTH_REQUIRED=1 python -m uvicorn agent_v3.api:create_app --factory --host 127.0.0.1 --port 8787
@@ -26,13 +26,27 @@ AGENT_AUTH_REQUIRED=1 python -m uvicorn agent_v3.api:create_app --factory --host
 
 Open the root workspace and enter the generated credential in Connect workspace. It stays in page memory, never browser persistent storage, and must be re-entered after reload. Do not share credentials. The offline management CLI is an administrator operation on the database; there is no public unauthenticated registration endpoint.
 
-Use `python -m agent_v3.manage provision --name "Synthetic Pilot" --workspace WORKSPACE_ID --role viewer` to issue read-only access to an existing workspace, or `--role operator` to permit task creation/approval. Owner and operator both have workflow permissions; owner identity is reserved for future administration. Use `python -m agent_v3.manage revoke --key-id KEY_ID` to revoke immediately. Only a SHA-256 digest of each random 256-bit credential is stored. Events record public credential IDs, not raw credentials.
+Use `--role administrator` for task, AI-planning and browser-write approval, or `--role user` for task submission and result/history access without approval authority. MASTER has the same execution authority plus workspace-governance responsibility. Use `python -m agent_v3.manage revoke --key-id KEY_ID` to revoke immediately. Only a SHA-256 digest of each random 256-bit credential is stored. Events record public credential IDs, not raw credentials.
 
 AGENT_DATABASE optionally selects the SQLite path (default .agent-v3/tasks.sqlite3). All commands must use the same path. Legacy tasks remain in the local demo workspace; they are not assigned to a new authenticated workspace. Omitting AGENT_AUTH_REQUIRED=1 intentionally enables the original unauthenticated loopback demo. Never use demo mode on a shared network.
 
 ## API
 
-GET /health reports process liveness; GET /ready queries storage. /docs and /openapi.json include bearer authentication. /api/account reports workspace, role, entitlements, provider budget/usage and disabled billing state. /api/tasks returns the latest 100 scoped tasks. Creation requires an Idempotency-Key header and a subject/tool JSON body. Approval requires the exact stored plan_hash. Pending tasks can be cancelled. Task details and JSON exports include results, optional AI provenance and ordered events. Cross-workspace identifiers return 404; viewer writes return 403; revoked/missing required credentials return 401. Host/origin protections remain enabled.
+GET /health reports process liveness; GET /ready queries storage. /docs and /openapi.json include bearer authentication. /api/account reports workspace, role, entitlements, provider budget/usage and disabled billing state. /api/tasks returns the latest 100 scoped tasks. Creation requires an Idempotency-Key header and a subject/tool JSON body. Approval requires the exact stored plan_hash. Pending tasks can be cancelled. Task details and JSON exports include results, optional AI provenance and ordered events. Cross-workspace identifiers return 404; USER approval, cancellation and AI-planning attempts return 403; revoked/missing required credentials return 401. Host/origin protections remain enabled.
+
+## Autonomous browser workflows
+
+`BrowserWorkflow` validates an ordered list of navigation, fill, select, checkbox, click, wait, extraction, screenshot, challenge and logout steps. External navigation requires HTTPS and an exact hostname allowlist. Login secrets are referenced by environment-variable name and are redacted from previews. URLs cannot contain credentials. Screenshot paths cannot escape their output directory.
+
+`run_batch` executes multiple workflows in order. Any workflow with write actions needs a `BrowserApproval` from MASTER or ADMINISTRATOR whose digest matches the exact preview. Changing any selector, value, host or step invalidates the approval. USER cannot authorize writes. A failure stops the batch.
+
+CAPTCHA and anti-bot mechanisms are never bypassed. A `human_challenge` step writes `human-action-required.json`, exits with a dedicated status and stops subsequent tasks. Resume requires a visible, authorized human session and a new reviewed execution.
+
+```bash
+python -m scripts.smoke_browser_autonomy
+```
+
+The synthetic end-to-end test verifies secret-backed login, form fields, select, checkbox, save, screenshot, logout and a separate challenge that pauses instead of continuing.
 
 ## Optional real AI provider
 

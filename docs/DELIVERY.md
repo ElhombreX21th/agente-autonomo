@@ -58,7 +58,9 @@ Cloud install_script and start_skill were saved for this new workflow. Saving do
 
 ## Final completion addendum — 2026-11-06
 
-The earlier report above describes the first local increment. The final increment adds revocable hashed workspace credentials, owner/operator/viewer roles, workspace-isolated task access and actor attribution; optional structured AI suggestions with stored provenance, token accounting and transactional budget reservations; pilot task entitlements; a deliberately disabled billing adapter; Docker/Compose packaging; an authenticated browser workflow; lint, type checking and dependency vulnerability auditing in CI.
+The earlier report above describes the first local increment. The final increment adds revocable hashed workspace credentials, MASTER/ADMINISTRATOR/USER roles, workspace-isolated task access and actor attribution; optional structured AI suggestions with stored provenance, token accounting and transactional budget reservations; pilot task entitlements; a deliberately disabled billing adapter; Docker/Compose packaging; an authenticated browser workflow; lint, type checking and dependency vulnerability auditing in CI.
+
+The browser-autonomy increment adds ordered multi-task execution, secret-backed login, logout, text fields, select controls, checkboxes, clicks, waits, extraction and screenshots. Write workflows require MASTER or ADMINISTRATOR approval bound to the exact preview digest. CAPTCHA and anti-bot challenges stop the batch and require human completion; they are not bypassed. The synthetic browser test covers login → form update → save → screenshot → logout and challenge pause.
 
 Final local validation passed: 48 main/API/security/provider tests plus 17 showcase tests (65 total), embedded showcase JavaScript syntax, Ruff critical-error checks, mypy with untyped bodies checked, Markdown links, Docker build and non-root authenticated container runtime. `pip-audit` reported no known vulnerabilities in the pinned runtime dependency set. The authenticated browser test verified create → approve → result → export → reload/reconnect → history, pending cancellation and mobile layout.
 

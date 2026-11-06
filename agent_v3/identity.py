@@ -17,6 +17,27 @@ class IdentityStore:
     def __init__(self, store):
         self.store = store
         with store.connection() as db:
+            existing = db.execute(
+                "SELECT sql FROM sqlite_master WHERE type='table' AND name='api_keys'"
+            ).fetchone()
+            if existing and "'owner'" in existing["sql"]:
+                db.executescript("""
+                    ALTER TABLE api_keys RENAME TO api_keys_legacy;
+                    CREATE TABLE api_keys (
+                        id TEXT PRIMARY KEY, digest TEXT UNIQUE NOT NULL,
+                        workspace TEXT NOT NULL REFERENCES workspaces(id),
+                        role TEXT NOT NULL CHECK(role IN ('master','administrator','user')),
+                        revoked INTEGER NOT NULL DEFAULT 0
+                    );
+                    INSERT INTO api_keys(id,digest,workspace,role,revoked)
+                    SELECT id,digest,workspace,
+                           CASE role WHEN 'owner' THEN 'master'
+                                     WHEN 'operator' THEN 'administrator'
+                                     ELSE 'user' END,
+                           revoked
+                    FROM api_keys_legacy;
+                    DROP TABLE api_keys_legacy;
+                """)
             db.executescript("""
                 CREATE TABLE IF NOT EXISTS workspaces (
                     id TEXT PRIMARY KEY, name TEXT NOT NULL,
@@ -25,13 +46,13 @@ class IdentityStore:
                 CREATE TABLE IF NOT EXISTS api_keys (
                     id TEXT PRIMARY KEY, digest TEXT UNIQUE NOT NULL,
                     workspace TEXT NOT NULL REFERENCES workspaces(id),
-                    role TEXT NOT NULL CHECK(role IN ('owner','operator','viewer')),
+                    role TEXT NOT NULL CHECK(role IN ('master','administrator','user')),
                     revoked INTEGER NOT NULL DEFAULT 0
                 );
             """)
 
-    def provision(self, name, role="owner", workspace=None):
-        if role not in {"owner", "operator", "viewer"}:
+    def provision(self, name, role="master", workspace=None):
+        if role not in {"master", "administrator", "user"}:
             raise ValueError("Unknown role")
         if not name.strip() or len(name) > 120:
             raise ValueError("Workspace name must be 1–120 characters")

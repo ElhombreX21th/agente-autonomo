@@ -2,7 +2,7 @@
 
 ## Demonstration acceptance criteria
 
-Use fictional support requests in two workspaces. An authenticated operator submits a task, optionally requests an AI suggestion, reviews the stored plan and approves one permitted local tool. A viewer inspects results but cannot approve. A second workspace cannot read, cancel or approve the first workspace's task. Results, actor identifiers and events survive restart and export as JSON. Revoked credentials fail immediately. These boundaries are covered by automated tests.
+Use fictional support requests in two workspaces. A USER submits a task and inspects results. An ADMINISTRATOR or MASTER optionally requests an AI suggestion, reviews the stored plan and approves one permitted local tool. A second workspace cannot read, cancel or approve the first workspace's task. Results, actor identifiers and events survive restart and export as JSON. Revoked credentials fail immediately. These boundaries are covered by automated tests.
 
 AI suggestions require an explicitly configured HTTPS provider, model, credential, positive token rates and workspace budget. The provider response must match the restricted plan schema. Suggestions cannot execute actions. They bind to the workspace, subject and tool when a task is created. Failed or ambiguous requests retain their conservative reservation and are not silently retried. Provider billing accuracy and tokenization are external contracts: validate configured rates and reconcile real invoices before a paid pilot.
 

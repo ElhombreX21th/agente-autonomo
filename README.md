@@ -42,7 +42,8 @@ Many teams lose time switching between tickets, spreadsheets, operational checkl
 | **Local API + storage** | Validated tasks, plan-bound approval, idempotency, pending cancellation | FastAPI + SQLite prototype |
 | **Operator workspace** | Create, approve, inspect and export tasks; searchable history | Connected local web application |
 | **Audit trail** | Timestamped events with credential identifiers | SQLite via API; transient via CLI |
-| **Workspace access** | Revocable hashed credentials, owner/operator/viewer roles, task isolation | Pilot API + browser sign-in |
+| **Workspace access** | Revocable hashed credentials, MASTER/ADMINISTRATOR/USER roles, task isolation | Pilot API + browser sign-in |
+| **Browser workflows** | Multiple ordered tasks, login/logout, form fields, selects, checkboxes, extraction and screenshots | Playwright worker with host allowlists and exact preview approval |
 | **AI planning** | Restricted structured suggestions, stored provenance, token accounting and conservative budget reservations | Optional OpenAI-compatible HTTPS adapter; contract tested, live provider untested |
 | **Commercial foundation** | Stored-task entitlement and disabled billing interface | Pilot foundation; no active charges |
 | **Portfolio lab** | Ticket triage, resilient API sync and fictional MedTech event analysis | Independent demos |
@@ -84,6 +85,8 @@ See [development and validation instructions](docs/DEVELOPMENT.md), including br
 The diagram describes the original local CLI core. The new API stores a task and immutable plan hash in SQLite; approval executes that same stored task and commits its result and audit events atomically. The [architecture decision](docs/adr/001-local-workflow.md) describes transaction boundaries and the deliberate local-only scope.
 
 **Safety by design:** no unrestricted shell tool, no automatic outbound network actions, and no silent execution in the v3 core. The API adds scoped storage, revocable workspace credentials, roles and optional structured AI planning. External action connectors, customer identity lifecycle/SSO and a hardened shared deployment remain future work. Bind the service to loopback only; see the [pilot access guide](docs/DEVELOPMENT.md).
+
+Browser workflows stop and request human intervention when a CAPTCHA or anti-bot challenge appears. No access level bypasses those controls. MASTER and ADMINISTRATOR can authorize the exact previewed write workflow; USER can submit tasks and inspect results but cannot authorize browser writes.
 
 ## Portfolio & demos
 

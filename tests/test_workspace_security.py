@@ -20,14 +20,14 @@ class WorkspaceTests(unittest.TestCase):
         self.path = Path(self.tmp.name) / "tasks.sqlite3"
         self.app = create_app(self.path, auth_required=True)
         self.client = TestClient(self.app, base_url="http://localhost")
-        self.owner, self.token = self.app.state.identities.provision(
+        self.master, self.token = self.app.state.identities.provision(
             "Synthetic workspace A"
         )
         self.other, self.other_token = self.app.state.identities.provision(
             "Synthetic workspace B"
         )
-        self.viewer, self.viewer_token = self.app.state.identities.provision(
-            "A", "viewer", self.owner.workspace
+        self.user, self.user_token = self.app.state.identities.provision(
+            "A", "user", self.master.workspace
         )
 
     def tearDown(self):
@@ -80,21 +80,21 @@ class WorkspaceTests(unittest.TestCase):
 
     def test_roles_and_audit_actor(self):
         task = self.create().json()
-        viewer = self.headers(self.viewer_token)
+        user = self.headers(self.user_token)
         self.assertEqual(
-            self.client.get("/api/tasks/" + task["id"], headers=viewer).status_code, 200
+            self.client.get("/api/tasks/" + task["id"], headers=user).status_code, 200
         )
-        self.assertEqual(self.create(self.viewer_token).status_code, 403)
+        self.assertEqual(self.create(self.user_token, key="user-task").status_code, 200)
         self.assertEqual(
             self.client.post(
                 "/api/tasks/" + task["id"] + "/approve",
-                headers=viewer,
+                headers=user,
                 json={"plan_hash": task["plan_hash"]},
             ).status_code,
             403,
         )
-        operator, token = self.app.state.identities.provision(
-            "A", "operator", self.owner.workspace
+        administrator, token = self.app.state.identities.provision(
+            "A", "administrator", self.master.workspace
         )
         done = self.client.post(
             "/api/tasks/" + task["id"] + "/approve",
@@ -102,15 +102,15 @@ class WorkspaceTests(unittest.TestCase):
             json={"plan_hash": task["plan_hash"]},
         ).json()
         self.assertEqual(done["status"], "completed")
-        self.assertEqual(done["events"][0]["actor"], self.owner.key_id)
-        self.assertEqual(done["events"][-1]["actor"], operator.key_id)
+        self.assertEqual(done["events"][0]["actor"], self.master.key_id)
+        self.assertEqual(done["events"][-1]["actor"], administrator.key_id)
         self.assertNotIn(token, str(done))
 
     def test_revocation_and_hashed_storage(self):
         with self.app.state.store.connection() as db:
             rows = [dict(r) for r in db.execute("SELECT * FROM api_keys")]
         self.assertNotIn(self.token, str(rows))
-        self.app.state.identities.revoke(self.owner.key_id)
+        self.app.state.identities.revoke(self.master.key_id)
         self.assertEqual(
             self.client.get("/api/tasks", headers=self.headers()).status_code, 401
         )
@@ -138,9 +138,9 @@ class WorkspaceTests(unittest.TestCase):
             self.assertEqual(self.create().status_code, 200)
         account = self.client.get("/api/account", headers=self.headers()).json()
         self.assertFalse(account["billing"]["charges_enabled"])
-        self.assertEqual(account["role"], "owner")
+        self.assertEqual(account["role"], "master")
         with self.assertRaises(PermissionError):
-            DisabledBilling().checkout(self.owner.workspace)
+            DisabledBilling().checkout(self.master.workspace)
 
     def test_ai_suggestion_is_bound_to_task_workspace_subject_and_tool(self):
         from agent_v3.planning import Planner
@@ -218,13 +218,13 @@ class WorkspaceTests(unittest.TestCase):
             self.assertEqual(
                 client.post(
                     "/api/interpret",
-                    headers=self.headers(self.viewer_token),
+                    headers=self.headers(self.user_token),
                     json={"subject": "Synthetic task"},
                 ).status_code,
                 403,
             )
             self.assertEqual(
-                app.state.planner.usage(self.owner.workspace)["requests"], 1
+                app.state.planner.usage(self.master.workspace)["requests"], 1
             )
 
     def test_provider_use_not_allowed_without_workspace_credential(self):
@@ -239,7 +239,39 @@ class WorkspaceTests(unittest.TestCase):
 
     def test_unknown_role_rejected(self):
         with self.assertRaises(ValueError):
-            self.app.state.identities.provision("A", "admin")
+            self.app.state.identities.provision("A", "owner")
+
+    def test_legacy_roles_are_migrated(self):
+        legacy_path = Path(self.tmp.name) / "legacy-roles.sqlite3"
+        store = Store(legacy_path)
+        with store.connection() as db:
+            db.executescript("""
+                CREATE TABLE workspaces (
+                    id TEXT PRIMARY KEY, name TEXT NOT NULL,
+                    plan TEXT NOT NULL DEFAULT 'pilot'
+                );
+                CREATE TABLE api_keys (
+                    id TEXT PRIMARY KEY, digest TEXT UNIQUE NOT NULL,
+                    workspace TEXT NOT NULL REFERENCES workspaces(id),
+                    role TEXT NOT NULL CHECK(role IN ('owner','operator','viewer')),
+                    revoked INTEGER NOT NULL DEFAULT 0
+                );
+                INSERT INTO workspaces(id,name) VALUES ('w','Legacy');
+                INSERT INTO api_keys(id,digest,workspace,role) VALUES
+                    ('one','digest-one','w','owner'),
+                    ('two','digest-two','w','operator'),
+                    ('three','digest-three','w','viewer');
+            """)
+        IdentityStore(store)
+        with store.connection() as db:
+            roles = {
+                row["id"]: row["role"]
+                for row in db.execute("SELECT id,role FROM api_keys")
+            }
+        self.assertEqual(
+            roles,
+            {"one": "master", "two": "administrator", "three": "user"},
+        )
 
 
 if __name__ == "__main__":
