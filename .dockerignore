@@ -1,0 +1,10 @@
+.git
+.env
+.env.*
+!.env.example
+.venv
+.agent-v3
+__pycache__
+*.sqlite3*
+node_modules
+attachments

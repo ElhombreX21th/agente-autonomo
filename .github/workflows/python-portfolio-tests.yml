@@ -3,13 +3,24 @@ name: Python Portfolio Lab Tests
 on:
   push:
     paths:
+      - 'requirements-*.txt'
+      - 'scripts/**'
+      - 'Dockerfile'
+      - 'compose.yaml'
+      - 'agent_v3/**'
+      - 'tests/**'
       - 'portfolio_lab/**'
-      - 'tests/test_portfolio_lab.py'
       - '.github/workflows/python-portfolio-tests.yml'
   pull_request:
     paths:
+      - '.github/workflows/python-portfolio-tests.yml'
+      - 'requirements-*.txt'
+      - 'scripts/**'
+      - 'Dockerfile'
+      - 'compose.yaml'
+      - 'agent_v3/**'
+      - 'tests/**'
       - 'portfolio_lab/**'
-      - 'tests/test_portfolio_lab.py'
 
 jobs:
   unittest:
@@ -20,7 +31,43 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
+      - name: Install API test dependencies
+        run: python -m pip install -r requirements-lock.txt
       - name: Run all portfolio regression tests
         run: python -m unittest discover -s tests -v
       - name: Run synthetic-data demos
         run: python -m portfolio_lab.demo
+
+  quality:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m pip install -r requirements-lock.txt -r requirements-quality.txt
+      - name: Lint critical Python errors
+        run: ruff check --select E9,F63,F7,F82 agent_v3 tests scripts
+      - name: Check types including unannotated bodies
+        run: mypy --check-untyped-defs --ignore-missing-imports agent_v3
+      - name: Audit pinned dependency vulnerabilities
+        run: pip-audit -r requirements-lock.txt --disable-pip --no-deps --progress-spinner off
+
+  browser:
+    runs-on: ubuntu-latest
+    env:
+      NODE_PATH: ${{ runner.temp }}/agent-browser/node_modules
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - run: python -m pip install -r requirements-lock.txt
+      - run: npm install --prefix "$RUNNER_TEMP/agent-browser" playwright@1.62.1
+      - run: |
+          "$RUNNER_TEMP/agent-browser/node_modules/.bin/playwright" install --with-deps chromium
+      - name: Verify authenticated support workflow in Chromium
+        run: python -m scripts.run_browser_smoke

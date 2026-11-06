@@ -1,105 +1,164 @@
-# Autonomous Agent
+<div align="center">
 
-Study project for structuring a local assistant with planning, memory, and task-oriented execution flow.
+![Autonomous Agent 3.0](docs/assets/autonomous-agent-hero-v4.svg)
 
-Status: early-stage repository. This documentation defines the project proposal and the recommended technical direction for future development.
+# Autonomous Agent 3.0
 
-## Screenshots
+**Workflows, under control.**
 
-### Console Preview
+A local workflow automation prototype for technical support and service operations: submit a request, review its plan, approve a permitted tool, and inspect the stored result.
 
-![Agent console preview](docs/screenshots/agent-console-preview.svg)
+[![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?logo=python&logoColor=white)](https://www.python.org/)
+![Stage](https://img.shields.io/badge/stage-prototype-334155)
+![Execution](https://img.shields.io/badge/execution-approval--gated-0e7490)
+![Commercial](https://img.shields.io/badge/commercial-pilot%20planning-7c3aed)
 
-### Workflow Overview
+**[Get started](#quick-start) · [Product vision](#product-vision) · [Explore demos](#portfolio--demos) · [Architecture](#architecture) · [Commercial pilots](#commercial-pilots)**
 
-![Agent workflow overview](docs/screenshots/agent-workflow-overview.svg)
+</div>
 
-## Objective
+---
 
-Build an organized foundation for an assistant that can receive a task, split it into steps, consult memory/context, and return a clear response to the user.
+## Review the request. Approve the work. Inspect the result.
 
-## Concepts Demonstrated
+For technical support and service operations teams exploring controlled automation: validate a task, choose an allowlisted local tool, explicitly approve execution, and inspect structured results. Start with the runnable prototype below; try the connected local operator workspace for persistent tasks and execution history.
 
-- Task planning
-- Local context memory
-- Modular organization
-- Controlled decision flow
-- Technical documentation for future development
-- Preparation for automated tests
+| CONTROL | VISIBILITY | EXTENSIBILITY |
+| :--- | :--- | :--- |
+| Explicit approval before local execution | Structured results and timestamped events | Small Python modules and tested operations demos |
 
-## Suggested Stack
+## Why this project?
 
-- Python 3.10+
-- FastAPI or Python CLI
-- JSON or SQLite for local memory
-- pytest for automated tests
-- GitHub Actions for continuous validation
+Many teams lose time switching between tickets, spreadsheets, operational checklists and disconnected tools. Autonomous Agent explores how to orchestrate these workflows with **explicit permissions, structured results and traceability**.
 
-## Recommended Structure
+> **Current maturity:** This repository contains working *prototype components* and independent synthetic-data demonstrations. The execution core is deterministic. **Optional structured AI suggestions require a configured provider and an authenticated workspace; no external action tools are enabled.** It is not production-ready.
 
-```text
-autonomous-agent/
-├── app/
-│   ├── agent.py
-│   ├── planner.py
-│   ├── memory.py
-│   ├── tools.py
-│   └── cli.py
-├── tests/
-│   └── test_agent.py
-├── docs/
-│   └── screenshots/
-└── README.md
+## What exists today
+
+| Component | Capability | Status |
+| --- | --- | --- |
+| **Agent v3 core** | Allowlisted actions, explicit approval, task IDs and structured outputs | Runnable prototype |
+| **Command-line interface** | Run approved checklist, summary and classification flows | Runnable prototype |
+| **Local API + storage** | Validated tasks, plan-bound approval, idempotency, pending cancellation | FastAPI + SQLite prototype |
+| **Operator workspace** | Create, approve, inspect and export tasks; searchable history | Connected local web application |
+| **Audit trail** | Timestamped events with credential identifiers | SQLite via API; transient via CLI |
+| **Workspace access** | Revocable hashed credentials, owner/operator/viewer roles, task isolation | Pilot API + browser sign-in |
+| **AI planning** | Restricted structured suggestions, stored provenance, token accounting and conservative budget reservations | Optional OpenAI-compatible HTTPS adapter; contract tested, live provider untested |
+| **Commercial foundation** | Stored-task entitlement and disabled billing interface | Pilot foundation; no active charges |
+| **Portfolio lab** | Ticket triage, resilient API sync and fictional MedTech event analysis | Independent demos |
+| **Operations showcase** | Dispatch readiness, lab data quality and pre-sales discovery | Independent demos |
+| **Web showcase** | Read-only local demonstration interface | Demo, not SaaS |
+
+## Quick start
+
+Requires **Python 3.11+** for the API. The original CLI and independent demos still use only Python's standard library.
+
+```bash
+git clone https://github.com/ElhombreX21th/agente-autonomo.git
+cd agente-autonomo
+
+python -m venv .venv
+# Windows: .venv\Scripts\activate
+. .venv/bin/activate
+python -m pip install -r requirements-lock.txt
+
+# Connected local workspace + API; default database: .agent-v3/tasks.sqlite3
+python -m uvicorn agent_v3.api:create_app --factory --host 127.0.0.1 --port 8787
 ```
+
+Open the local workspace on port 8787 and submit a fictional request. Review its stored plan before approving. Results and events survive service restarts. API schema is available at `/docs` and `/openapi.json`; liveness and storage readiness at `/health` and `/ready`.
+
+```bash
+# From the repository root, with the virtual environment active
+python -m unittest discover -s tests -v
+python -m unittest discover -s upwork_showcase_2026/tests -v
+python -m agent_v3.cli --task "Review an urgent support ticket" --tool classify --approve
+```
+
+See [development and validation instructions](docs/DEVELOPMENT.md), including browser smoke tests, and the [delivery report](docs/DELIVERY.md) for verified results and remaining work. GitHub Actions runs the Python suites; remote CI status is reported separately from local results.
+
+## Architecture
+
+![Implemented deterministic execution architecture: validated task, allowlisted tool, explicit approval, structured result and transient audit](docs/assets/execution-architecture-v4.svg)
+
+The diagram describes the original local CLI core. The new API stores a task and immutable plan hash in SQLite; approval executes that same stored task and commits its result and audit events atomically. The [architecture decision](docs/adr/001-local-workflow.md) describes transaction boundaries and the deliberate local-only scope.
+
+**Safety by design:** no unrestricted shell tool, no automatic outbound network actions, and no silent execution in the v3 core. The API adds scoped storage, revocable workspace credentials, roles and optional structured AI planning. External action connectors, customer identity lifecycle/SSO and a hardened shared deployment remain future work. Bind the service to loopback only; see the [pilot access guide](docs/DEVELOPMENT.md).
+
+## Portfolio & demos
+
+### Python automation lab
+
+Explore [portfolio_lab](portfolio_lab/README.md) for three independent demonstrations using fictional/synthetic inputs:
+
+- **Support ticket triage:** assisted categorization with human review.
+- **API synchronization:** resilient JSON synchronization backed by SQLite.
+- **MedTech event analysis:** fictional event logs with cited fictional runbook entries.
+
+```bash
+python -m portfolio_lab.demo
+python -m unittest discover -s tests -v
+```
+
+### Operations showcase
+
+Explore [the showcase documentation](upwork_showcase_2026/README.md), [the web interface](upwork_showcase_2026/web/showcase.html) and the workflows:
+
+| Demo | Business question |
+| --- | --- |
+| [Field Service Dispatch](upwork_showcase_2026/medtech_service_desk/logic.py) | Is a visit ready for dispatch? |
+| [Laboratory Data Quality](upwork_showcase_2026/healthcare_data_quality/logic.py) | Which records require review? |
+| [Technical Pre-Sales](upwork_showcase_2026/technical_presales_crm/logic.py) | What is the next qualified action? |
+
+```bash
+python -m unittest discover -s upwork_showcase_2026/tests -v
+python -m upwork_showcase_2026.server
+```
+
+### Connected operator workspace
+
+![Actual local agent workspace with a completed fictional support task](docs/screenshots/agent-workspace-v6.png)
+
+Real browser capture: a fictional request was submitted, approved and classified through the API. Stored results, JSON export and history were verified in the browser. The captured execution uses a deterministic tool. Optional AI suggestions are separately labeled, validated and stored before human-approved execution.
+
+### Operations showcase, synthetic data
+
+![Actual local operations showcase captured in Chromium using fictional data](docs/screenshots/operations-showcase-v4.png)
+
+Actual browser capture of the read-only operations showcase. It is a separate working demo, not an agent execution dashboard. The [operator workspace illustration](docs/assets/autonomous-agent-dashboard.svg) remains a **design concept**.
 
 ## Roadmap
 
-- [ ] Create the base project structure
-- [ ] Implement the initial CLI
-- [ ] Create the planning module
-- [ ] Create simple local memory
-- [ ] Add automated tests
-- [ ] Create a FastAPI API
-- [ ] Add logs and validations
-- [ ] Prepare a demonstrable portfolio version
+The [delivery roadmap](docs/ROADMAP.md) separates the implemented local backend and dashboard from remaining live-provider validation, deployment hardening and commercial validation work. See the [implementation and commercialization notes](docs/UPGRADE_V3.md) for pricing hypotheses and licensing considerations.
 
-## Future Local Execution
+## Commercial pilots
 
-When the codebase is implemented, local execution should follow a flow similar to:
+**Target workflows:** support ticket operations, field-service coordination, operational checklists, data-quality review and internal reporting.
 
-```bash
-python -m app.cli
-```
+**Engagement model under evaluation:** tailored pilot projects, setup/integration services and eventual monthly subscriptions. No pricing, service-level guarantees, production deployments or customer outcomes are represented as established. See [pilot acceptance criteria and commercial boundaries](docs/COMMERCIAL_PILOT.md).
 
-Tests:
+Interested in evaluating a pilot? [Open a GitHub discussion via an issue](https://github.com/ElhombreX21th/agente-autonomo/issues/new) describing a workflow and its constraints. **Do not include credentials, patient information or confidential business data.**
 
-```bash
-pytest
-```
+## Brand assets
 
-## Portfolio Value
+The [hero](docs/assets/autonomous-agent-hero-v4.svg), [symbol](docs/assets/autonomous-agent-mark.svg) and [execution architecture](docs/assets/execution-architecture-v4.svg) use a consistent navy, cyan and violet palette. Versioned filenames avoid reusing older GitHub image-cache paths. Legacy concept assets are retained for existing links; they are not product screenshots.
 
-This project can demonstrate AI assistant architecture, software organization, separation of responsibilities, testing, and documentation. To make it stronger for interviews, the next step is to implement a small but complete functional MVP.
+## Security, license & limitations
 
-## Author
+- Synthetic demonstration data only; not a clinical decision-support product.
+- Never commit API keys, client records or sensitive operational details.
+- Review the [dependency license inventory](docs/DEPENDENCY_LICENSES.md) and code ownership before commercial distribution.
+- **No open-source license has been declared here.** Public visibility alone does not grant reuse or redistribution rights.
+- This repository is a prototype/portfolio, not evidence of paid customers or production certification.
 
-Created by ElhombreX21th.
+---
 
+<div align="center">
 
-## Runnable Python, AI automation and MedTech portfolio lab (2026)
+**AUTONOMOUS AGENT 3.0**
 
-Three independent synthetic-data demonstrations are available at [portfolio_lab](portfolio_lab/README.md): support-ticket ML triage with human review, resilient JSON API synchronization using SQLite, and MedTech event-log analysis with cited fictional runbook entries. Run `python -m portfolio_lab.demo` and `python -m unittest discover -s tests -v` from the repository root. **13 tests passed locally (2026-10-31).** These are not paid client or production implementations.
+*Build workflows you can inspect, approve and improve.*
 
+Maintained by [ElhombreX21th](https://github.com/ElhombreX21th)
 
-## 2026 Upwork Showcase — Three Distinct MedTech Operations Demonstrations
-
-These independent synthetic-data projects complement the existing portfolio instead of repeating the SLA, event-log, ticket-triage or API-sync demos.
-
-- [Field Service Dispatch Readiness](upwork_showcase_2026/medtech_service_desk/logic.py): parts, training, site access and scheduling.
-- [Synthetic Laboratory Data Quality](upwork_showcase_2026/healthcare_data_quality/logic.py): report mismatches, missing records and duplicate sources.
-- [Technical Pre-Sales Discovery](upwork_showcase_2026/technical_presales_crm/logic.py): qualification and consent-aware next steps.
-- [Interactive web showcase](upwork_showcase_2026/web/showcase.html), [read-only local server](upwork_showcase_2026/server.py), [17 Python regression tests](upwork_showcase_2026/tests/test_workflows.py), [documentation](upwork_showcase_2026/README.md).
-
-To verify: `python -m unittest discover -s upwork_showcase_2026/tests -v` and `python -m upwork_showcase_2026.server`.
-
-These prototypes use fictional data; there are no clinical, compliance, production or paid-client claims. The separate downloadable portfolio package contains actual browser screenshots.
+</div>

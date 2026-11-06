@@ -3,10 +3,12 @@ on:
   push:
     paths:
       - 'upwork_showcase_2026/**'
+      - 'scripts/check_showcase_js.py'
       - '.github/workflows/medtech-showcase-tests.yml'
   pull_request:
     paths:
       - 'upwork_showcase_2026/**'
+      - 'scripts/check_showcase_js.py'
       - '.github/workflows/medtech-showcase-tests.yml'
 jobs:
   python-tests:
@@ -18,3 +20,5 @@ jobs:
           python-version: '3.11'
       - name: Run 17 deterministic offline tests
         run: python -m unittest discover -s upwork_showcase_2026/tests -v
+      - name: Check browser script syntax
+        run: python scripts/check_showcase_js.py
