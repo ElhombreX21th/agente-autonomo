@@ -1,6 +1,6 @@
 <div align="center">
 
-![Autonomous Agent 3.0](docs/assets/autonomous-agent-banner.svg)
+![Autonomous Agent 3.0](docs/assets/autonomous-agent-hero-v3.svg)
 
 # Autonomous Agent 3.0
 
