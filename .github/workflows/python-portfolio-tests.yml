@@ -3,13 +3,16 @@ name: Python Portfolio Lab Tests
 on:
   push:
     paths:
+      - 'agent_v3/**'
+      - 'tests/**'
       - 'portfolio_lab/**'
-      - 'tests/test_portfolio_lab.py'
       - '.github/workflows/python-portfolio-tests.yml'
   pull_request:
     paths:
+      - '.github/workflows/python-portfolio-tests.yml'
+      - 'agent_v3/**'
+      - 'tests/**'
       - 'portfolio_lab/**'
-      - 'tests/test_portfolio_lab.py'
 
 jobs:
   unittest:

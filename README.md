@@ -1,6 +1,6 @@
 <div align="center">
 
-![Autonomous Agent 3.0](docs/assets/autonomous-agent-hero-v3.svg)
+![Autonomous Agent 3.0](docs/assets/autonomous-agent-hero-v4.svg)
 
 # Autonomous Agent 3.0
 
@@ -19,23 +19,13 @@ A Python-first automation project evolving toward a commercial AI agent platform
 
 ---
 
-## Product vision
+## Review the request. Approve the work. Inspect the result.
 
-<div align="center">
-
-![Autonomous Agent console design concept](docs/assets/autonomous-agent-dashboard.svg)
-
-*Interface concept — a design direction, not a deployed dashboard or working SaaS.*
-
-</div>
-
-### Built for operational clarity
+For technical support and service operations teams exploring controlled automation: validate a task, choose an allowlisted local tool, explicitly approve execution, and inspect structured results. Start with the runnable prototype below; persistent workflows and a connected operator workspace are the next delivery milestones.
 
 | CONTROL | VISIBILITY | EXTENSIBILITY |
 | :--- | :--- | :--- |
-| Explicit approval before executing local workflows | Structured task results and in-memory event records | Python modules and independent operational demos |
-
-**The opportunity:** turn repetitive, reviewable business processes into reliable workflows. **The next milestone:** connect this prototype to authenticated services, persistent execution records and a real operator interface.
+| Explicit approval before local execution | Structured results and timestamped events | Small Python modules and tested operations demos |
 
 ## Why this project?
 
@@ -47,8 +37,8 @@ Many teams lose time switching between tickets, spreadsheets, operational checkl
 
 | Component | Capability | Status |
 | --- | --- | --- |
-| **Agent v3 core** | Allowlisted actions, explicit approval, task IDs and structured outputs | Prototype in v3 branch |
-| **Command-line interface** | Run approved checklist, summary and classification flows | Prototype in v3 branch |
+| **Agent v3 core** | Allowlisted actions, explicit approval, task IDs and structured outputs | Runnable prototype |
+| **Command-line interface** | Run approved checklist, summary and classification flows | Runnable prototype |
 | **Audit trail** | Timestamped execution events | In-memory only |
 | **Portfolio lab** | Ticket triage, resilient API sync and fictional MedTech event analysis | Independent demos |
 | **Operations showcase** | Dispatch readiness, lab data quality and pre-sales discovery | Independent demos |
@@ -73,28 +63,13 @@ python -m agent_v3.cli --task "Review an urgent support ticket" --tool classify 
 python -m unittest discover -s tests -p "test_agent_v3.py" -v
 ```
 
-The commands above are instructions for local verification; the new v3 tests have not yet been confirmed in CI.
+The v3 unit tests and CLI examples are verified locally. GitHub Actions is configured to run the full suites on changes to the core, demos, tests or workflow configuration; a remote CI result is not yet confirmed.
 
 ## Architecture
 
-```text
-                      TASK REQUEST
-                           |
-                     Input validation
-                           |
-                    Tool allowlist
-                           |
-                    Approval required?
-                      /          \
-                    No            Yes
-                    |              |
-              Return preview   Execute local
-              + wait           deterministic tool
-                                     |
-                             Structured result
-                                     |
-                            In-memory audit events
-```
+![Implemented deterministic execution architecture: validated task, allowlisted tool, explicit approval, structured result and transient audit](docs/assets/execution-architecture-v4.svg)
+
+The diagram describes the implemented local core. An unapproved call returns a preview; an approved call is a separate execution with a new task ID. There is no durable pending-task approval or resume operation yet.
 
 **Safety by design:** no unrestricted shell tool, no automatic outbound network actions, and no silent execution in the v3 core. Persistent audit storage, authentication and multi-tenant controls are future work.
 
@@ -128,26 +103,15 @@ python -m unittest discover -s upwork_showcase_2026/tests -v
 python -m upwork_showcase_2026.server
 ```
 
-**Visual previews**
+### Real interface, synthetic data
 
-| Agent console | Workflow overview |
-| --- | --- |
-| ![Console preview](docs/screenshots/agent-console-preview.svg) | ![Workflow preview](docs/screenshots/agent-workflow-overview.svg) |
+![Actual local operations showcase captured in Chromium using fictional data](docs/screenshots/operations-showcase-v4.png)
+
+Actual browser capture of the read-only operations showcase. It is a separate working demo, not an agent execution dashboard. The [operator workspace illustration](docs/assets/autonomous-agent-dashboard.svg) remains a **design concept**.
 
 ## Roadmap
 
-- [x] Document initial agent architecture and portfolio examples
-- [x] Add an isolated v3 deterministic agent core and CLI (development branch)
-- [x] Add v3 unit tests (execution/CI validation pending)
-- [ ] Persist task state and audit records
-- [ ] Introduce authenticated API and tenant isolation
-- [ ] Add pluggable LLM integration with structured output and spending limits
-- [ ] Implement scoped tool connectors and human approval flows
-- [ ] Build an operator dashboard and observability
-- [ ] Validate security, reliability and costs with pilot users
-- [ ] Launch commercial packaging and billing after validation
-
-See the [v3 implementation and commercialization plan](docs/UPGRADE_V3.md).
+The [delivery roadmap](docs/ROADMAP.md) separates implemented capabilities from upcoming backend, dashboard, AI and SaaS work. See the [implementation and commercialization notes](docs/UPGRADE_V3.md) for pricing hypotheses and licensing considerations.
 
 ## Commercial pilots
 
@@ -159,7 +123,7 @@ Interested in evaluating a pilot? [Open a GitHub discussion via an issue](https:
 
 ## Brand assets
 
-The [product banner](docs/assets/autonomous-agent-banner.svg), [symbol](docs/assets/autonomous-agent-mark.svg) and [dashboard concept](docs/assets/autonomous-agent-dashboard.svg) are versioned SVG assets. The dashboard illustration is not evidence of an implemented user interface.
+The [hero](docs/assets/autonomous-agent-hero-v4.svg), [symbol](docs/assets/autonomous-agent-mark.svg) and [execution architecture](docs/assets/execution-architecture-v4.svg) use a consistent navy, cyan and violet palette. Versioned filenames avoid reusing older GitHub image-cache paths. Legacy concept assets are retained for existing links; they are not product screenshots.
 
 ## Security, license & limitations
 
