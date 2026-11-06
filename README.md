@@ -4,7 +4,7 @@
 
 # Autonomous Agent 3.0
 
-**From a task to a controlled, auditable workflow.**
+**Workflows, under control.**
 
 A Python-first automation project evolving toward a commercial AI agent platform for technical support, service operations and business workflows.
 
@@ -13,11 +13,29 @@ A Python-first automation project evolving toward a commercial AI agent platform
 ![Execution](https://img.shields.io/badge/execution-approval--gated-0e7490)
 ![Commercial](https://img.shields.io/badge/commercial-pilot%20planning-7c3aed)
 
-**[Quick start](#quick-start) · [Live-in-browser showcase (local)](#portfolio--demos) · [Architecture](#architecture) · [Roadmap](#roadmap) · [Commercial pilots](#commercial-pilots)**
+**[Get started](#quick-start) · [Product vision](#product-vision) · [Explore demos](#portfolio--demos) · [Architecture](#architecture) · [Commercial pilots](#commercial-pilots)**
 
 </div>
 
 ---
+
+## Product vision
+
+<div align="center">
+
+![Autonomous Agent console design concept](docs/assets/autonomous-agent-dashboard.svg)
+
+*Interface concept — a design direction, not a deployed dashboard or working SaaS.*
+
+</div>
+
+### Built for operational clarity
+
+| CONTROL | VISIBILITY | EXTENSIBILITY |
+| :--- | :--- | :--- |
+| Explicit approval before executing local workflows | Structured task results and in-memory event records | Python modules and independent operational demos |
+
+**The opportunity:** turn repetitive, reviewable business processes into reliable workflows. **The next milestone:** connect this prototype to authenticated services, persistent execution records and a real operator interface.
 
 ## Why this project?
 
@@ -138,6 +156,10 @@ See the [v3 implementation and commercialization plan](docs/UPGRADE_V3.md).
 **Engagement model under evaluation:** tailored pilot projects, setup/integration services and eventual monthly subscriptions. No pricing, service-level guarantees, production deployments or customer outcomes are represented as established.
 
 Interested in evaluating a pilot? [Open a GitHub discussion via an issue](https://github.com/ElhombreX21th/agente-autonomo/issues/new) describing a workflow and its constraints. **Do not include credentials, patient information or confidential business data.**
+
+## Brand assets
+
+The [product banner](docs/assets/autonomous-agent-banner.svg), [symbol](docs/assets/autonomous-agent-mark.svg) and [dashboard concept](docs/assets/autonomous-agent-dashboard.svg) are versioned SVG assets. The dashboard illustration is not evidence of an implemented user interface.
 
 ## Security, license & limitations
 
