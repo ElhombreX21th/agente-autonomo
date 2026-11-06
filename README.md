@@ -1,105 +1,160 @@
-# Autonomous Agent
+<div align="center">
 
-Study project for structuring a local assistant with planning, memory, and task-oriented execution flow.
+![Autonomous Agent 3.0](docs/assets/autonomous-agent-banner.svg)
 
-Status: early-stage repository. This documentation defines the project proposal and the recommended technical direction for future development.
+# Autonomous Agent 3.0
 
-## Screenshots
+**From a task to a controlled, auditable workflow.**
 
-### Console Preview
+A Python-first automation project evolving toward a commercial AI agent platform for technical support, service operations and business workflows.
 
-![Agent console preview](docs/screenshots/agent-console-preview.svg)
+[![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?logo=python&logoColor=white)](https://www.python.org/)
+![Stage](https://img.shields.io/badge/stage-prototype-334155)
+![Execution](https://img.shields.io/badge/execution-approval--gated-0e7490)
+![Commercial](https://img.shields.io/badge/commercial-pilot%20planning-7c3aed)
 
-### Workflow Overview
+**[Quick start](#quick-start) · [Live-in-browser showcase (local)](#portfolio--demos) · [Architecture](#architecture) · [Roadmap](#roadmap) · [Commercial pilots](#commercial-pilots)**
 
-![Agent workflow overview](docs/screenshots/agent-workflow-overview.svg)
+</div>
 
-## Objective
+---
 
-Build an organized foundation for an assistant that can receive a task, split it into steps, consult memory/context, and return a clear response to the user.
+## Why this project?
 
-## Concepts Demonstrated
+Many teams lose time switching between tickets, spreadsheets, operational checklists and disconnected tools. Autonomous Agent explores how to orchestrate these workflows with **explicit permissions, structured results and traceability**.
 
-- Task planning
-- Local context memory
-- Modular organization
-- Controlled decision flow
-- Technical documentation for future development
-- Preparation for automated tests
+> **Current maturity:** This repository contains working *prototype components* and independent synthetic-data demonstrations. The v3 core is deterministic and **does not yet use an LLM or perform external autonomous actions**. It is not production-ready.
 
-## Suggested Stack
+## What exists today
 
-- Python 3.10+
-- FastAPI or Python CLI
-- JSON or SQLite for local memory
-- pytest for automated tests
-- GitHub Actions for continuous validation
+| Component | Capability | Status |
+| --- | --- | --- |
+| **Agent v3 core** | Allowlisted actions, explicit approval, task IDs and structured outputs | Prototype in v3 branch |
+| **Command-line interface** | Run approved checklist, summary and classification flows | Prototype in v3 branch |
+| **Audit trail** | Timestamped execution events | In-memory only |
+| **Portfolio lab** | Ticket triage, resilient API sync and fictional MedTech event analysis | Independent demos |
+| **Operations showcase** | Dispatch readiness, lab data quality and pre-sales discovery | Independent demos |
+| **Web showcase** | Read-only local demonstration interface | Demo, not SaaS |
 
-## Recommended Structure
+## Quick start
+
+Requires **Python 3.10+**. The v3 prototype uses only Python's standard library.
+
+```bash
+git clone https://github.com/ElhombreX21th/agente-autonomo.git
+cd agente-autonomo
+git switch upgrade/autonomous-agent-v3
+
+# Preview a task; execution requires explicit approval
+python -m agent_v3.cli --task "Review a support ticket" --tool checklist
+
+# Run an approved local deterministic workflow
+python -m agent_v3.cli --task "Review an urgent support ticket" --tool classify --approve
+
+# Run the new v3 regression tests
+python -m unittest discover -s tests -p "test_agent_v3.py" -v
+```
+
+The commands above are instructions for local verification; the new v3 tests have not yet been confirmed in CI.
+
+## Architecture
 
 ```text
-autonomous-agent/
-├── app/
-│   ├── agent.py
-│   ├── planner.py
-│   ├── memory.py
-│   ├── tools.py
-│   └── cli.py
-├── tests/
-│   └── test_agent.py
-├── docs/
-│   └── screenshots/
-└── README.md
+                      TASK REQUEST
+                           |
+                     Input validation
+                           |
+                    Tool allowlist
+                           |
+                    Approval required?
+                      /          \
+                    No            Yes
+                    |              |
+              Return preview   Execute local
+              + wait           deterministic tool
+                                     |
+                             Structured result
+                                     |
+                            In-memory audit events
 ```
+
+**Safety by design:** no unrestricted shell tool, no automatic outbound network actions, and no silent execution in the v3 core. Persistent audit storage, authentication and multi-tenant controls are future work.
+
+## Portfolio & demos
+
+### Python automation lab
+
+Explore [portfolio_lab](portfolio_lab/README.md) for three independent demonstrations using fictional/synthetic inputs:
+
+- **Support ticket triage:** assisted categorization with human review.
+- **API synchronization:** resilient JSON synchronization backed by SQLite.
+- **MedTech event analysis:** fictional event logs with cited fictional runbook entries.
+
+```bash
+python -m portfolio_lab.demo
+python -m unittest discover -s tests -v
+```
+
+### Operations showcase
+
+Explore [the showcase documentation](upwork_showcase_2026/README.md), [the web interface](upwork_showcase_2026/web/showcase.html) and the workflows:
+
+| Demo | Business question |
+| --- | --- |
+| [Field Service Dispatch](upwork_showcase_2026/medtech_service_desk/logic.py) | Is a visit ready for dispatch? |
+| [Laboratory Data Quality](upwork_showcase_2026/healthcare_data_quality/logic.py) | Which records require review? |
+| [Technical Pre-Sales](upwork_showcase_2026/technical_presales_crm/logic.py) | What is the next qualified action? |
+
+```bash
+python -m unittest discover -s upwork_showcase_2026/tests -v
+python -m upwork_showcase_2026.server
+```
+
+**Visual previews**
+
+| Agent console | Workflow overview |
+| --- | --- |
+| ![Console preview](docs/screenshots/agent-console-preview.svg) | ![Workflow preview](docs/screenshots/agent-workflow-overview.svg) |
 
 ## Roadmap
 
-- [ ] Create the base project structure
-- [ ] Implement the initial CLI
-- [ ] Create the planning module
-- [ ] Create simple local memory
-- [ ] Add automated tests
-- [ ] Create a FastAPI API
-- [ ] Add logs and validations
-- [ ] Prepare a demonstrable portfolio version
+- [x] Document initial agent architecture and portfolio examples
+- [x] Add an isolated v3 deterministic agent core and CLI (development branch)
+- [x] Add v3 unit tests (execution/CI validation pending)
+- [ ] Persist task state and audit records
+- [ ] Introduce authenticated API and tenant isolation
+- [ ] Add pluggable LLM integration with structured output and spending limits
+- [ ] Implement scoped tool connectors and human approval flows
+- [ ] Build an operator dashboard and observability
+- [ ] Validate security, reliability and costs with pilot users
+- [ ] Launch commercial packaging and billing after validation
 
-## Future Local Execution
+See the [v3 implementation and commercialization plan](docs/UPGRADE_V3.md).
 
-When the codebase is implemented, local execution should follow a flow similar to:
+## Commercial pilots
 
-```bash
-python -m app.cli
-```
+**Target workflows:** support ticket operations, field-service coordination, operational checklists, data-quality review and internal reporting.
 
-Tests:
+**Engagement model under evaluation:** tailored pilot projects, setup/integration services and eventual monthly subscriptions. No pricing, service-level guarantees, production deployments or customer outcomes are represented as established.
 
-```bash
-pytest
-```
+Interested in evaluating a pilot? [Open a GitHub discussion via an issue](https://github.com/ElhombreX21th/agente-autonomo/issues/new) describing a workflow and its constraints. **Do not include credentials, patient information or confidential business data.**
 
-## Portfolio Value
+## Security, license & limitations
 
-This project can demonstrate AI assistant architecture, software organization, separation of responsibilities, testing, and documentation. To make it stronger for interviews, the next step is to implement a small but complete functional MVP.
+- Synthetic demonstration data only; not a clinical decision-support product.
+- Never commit API keys, client records or sensitive operational details.
+- Review dependency licenses and code ownership before commercial distribution.
+- **No open-source license has been declared here.** Public visibility alone does not grant reuse or redistribution rights.
+- This repository is a prototype/portfolio, not evidence of paid customers or production certification.
 
-## Author
+---
 
-Created by ElhombreX21th.
+<div align="center">
 
+**AUTONOMOUS AGENT 3.0**
 
-## Runnable Python, AI automation and MedTech portfolio lab (2026)
+*Build workflows you can inspect, approve and improve.*
 
-Three independent synthetic-data demonstrations are available at [portfolio_lab](portfolio_lab/README.md): support-ticket ML triage with human review, resilient JSON API synchronization using SQLite, and MedTech event-log analysis with cited fictional runbook entries. Run `python -m portfolio_lab.demo` and `python -m unittest discover -s tests -v` from the repository root. **13 tests passed locally (2026-10-31).** These are not paid client or production implementations.
+Maintained by [ElhombreX21th](https://github.com/ElhombreX21th)
 
-
-## 2026 Upwork Showcase — Three Distinct MedTech Operations Demonstrations
-
-These independent synthetic-data projects complement the existing portfolio instead of repeating the SLA, event-log, ticket-triage or API-sync demos.
-
-- [Field Service Dispatch Readiness](upwork_showcase_2026/medtech_service_desk/logic.py): parts, training, site access and scheduling.
-- [Synthetic Laboratory Data Quality](upwork_showcase_2026/healthcare_data_quality/logic.py): report mismatches, missing records and duplicate sources.
-- [Technical Pre-Sales Discovery](upwork_showcase_2026/technical_presales_crm/logic.py): qualification and consent-aware next steps.
-- [Interactive web showcase](upwork_showcase_2026/web/showcase.html), [read-only local server](upwork_showcase_2026/server.py), [17 Python regression tests](upwork_showcase_2026/tests/test_workflows.py), [documentation](upwork_showcase_2026/README.md).
-
-To verify: `python -m unittest discover -s upwork_showcase_2026/tests -v` and `python -m upwork_showcase_2026.server`.
-
-These prototypes use fictional data; there are no clinical, compliance, production or paid-client claims. The separate downloadable portfolio package contains actual browser screenshots.
+</div>
